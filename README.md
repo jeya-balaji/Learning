@@ -1,2 +1,2 @@
 # Learning
-Slef learning
+Self learning
