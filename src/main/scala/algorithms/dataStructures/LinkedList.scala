@@ -86,15 +86,6 @@ case class LinkedList[A](value: A, link: Node[A]) extends Node[A] {
     applyFun(this, f)
   }
 
-  def addLink(node: Node[A]): Node[A] = {
-    if (link.isEmpty) {
-      this.copy(link = node)
-    } else {
-      val res = this.link.addLink(node)
-      this.copy(link = res)
-    }
-  }
-
   def append(value: A): Node[A] = {
     if (link.isEmpty) {
       this.copy(link = LinkedList(value, EmptyNode))
@@ -183,13 +174,12 @@ object LinkedList {
     } else {
       var newNode: Node[A] = EmptyNode
       values foreach{ v =>
-        val ele = LinkedList(v, EmptyNode)
         if (newNode.isEmpty) {
-          newNode = ele
+          newNode = LinkedList(v, EmptyNode)
         } else if (newNode.isEmptyLink) {
-          newNode = newNode.copy(link = ele)
+          newNode = newNode.copy(link = LinkedList(v, EmptyNode))
         } else {
-          newNode = newNode.addLink(ele)
+          newNode = newNode.append(v)
         }
       }
       newNode
