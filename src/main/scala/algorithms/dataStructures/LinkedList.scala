@@ -12,7 +12,7 @@ sealed trait Node[+A] {
   def map[B](f: Node[A] => B): Node[B]
 }
 
-case object NoValueException extends Exception
+case class NoValueException(msg: String) extends RuntimeException(msg)
 
 case object EmptyNode extends Node[Nothing] {
   override def isEmpty: Boolean = true
@@ -27,9 +27,9 @@ case object EmptyNode extends Node[Nothing] {
 
   override def size:Int = 0
 
-  override def getValue: Nothing = throw NoValueException
+  override def getValue: Nothing = throw NoValueException("Empty node")
 
-  override def getValue(position: Int): Nothing = throw NoValueException
+  override def getValue(position: Int): Nothing = throw NoValueException("Empty node")
 
   override def map[B](f: (Node[Nothing]) => B): Node[B] = EmptyNode
 
@@ -100,7 +100,7 @@ case class LinkedList[A](value: A, link: Node[A]) extends Node[A] {
   }
 
   def addAt(value: A, position: Int): Node[A] = {
-    def increment(n: LinkedList[A], newNode: LinkedList[A], i: Int): Node[A] = {
+    def increment(n: LinkedList[A], newNode: LinkedList[A], i: Int): LinkedList[A] = {
       if (i == position - 1) {
         val modifiedNode = newNode.copy(link = n.link)
         n.copy(link = modifiedNode)
@@ -114,7 +114,7 @@ case class LinkedList[A](value: A, link: Node[A]) extends Node[A] {
       prepend(value)
     } else if (position == size) {
       append(value)
-    } else if (position < size){
+    } else if (position < size && position > 0){
       increment(this,LinkedList(value, EmptyNode), 0)
     } else {
       this

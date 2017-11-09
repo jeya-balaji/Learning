@@ -23,6 +23,26 @@ class LinkedListTest extends UnitSpec {
     ll.getLink should not be EmptyNode
   }
 
+  it should "get the value of the head node if no position given" in {
+    val ll = LinkedList(1,2,3,4,5)
+
+    ll.getValue shouldBe 1
+  }
+
+  it should "get the value of the node by the given node" in {
+    val ll = LinkedList(1,2,3,4,5)
+
+    ll.getValue(3) shouldBe 4
+  }
+
+  it should "throw NoValueException for invalid position" in {
+    val ll = LinkedList(1,2,3,4,5)
+
+    the [NoValueException] thrownBy {
+      ll.getValue(-1)
+    }
+  }
+
   it should "give the next item for the given node" in {
     val ll = LinkedList(1,2,3,4,5)
     val ll1 = ll.next
@@ -98,6 +118,13 @@ class LinkedListTest extends UnitSpec {
     ll.getValue shouldBe 1
 
     ll shouldBe ll1
+  }
+
+  it should "not append item if the position is wrong" in {
+    val ll = LinkedList(1,2,3,4,5)
+    val ll2 = ll.addAt(6, -1)
+
+    ll shouldBe ll2
   }
 
 
