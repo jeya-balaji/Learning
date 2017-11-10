@@ -9,7 +9,7 @@ sealed trait Node[+A] {
   def size: Int
   def getValue: A
   def getValue(position: Int): A
-  def map[B](f: Node[A] => B): Node[B]
+  def map[B](f: A => B): Node[B]
 }
 
 case class NoValueException(msg: String) extends RuntimeException(msg)
@@ -31,7 +31,7 @@ case object EmptyNode extends Node[Nothing] {
 
   override def getValue(position: Int): Nothing = throw NoValueException("Empty node")
 
-  override def map[B](f: (Node[Nothing]) => B): Node[B] = EmptyNode
+  override def map[B](f: Nothing => B): Node[B] = EmptyNode
 
   def append[A](value: A): Node[A] = LinkedList(value)
 
@@ -72,26 +72,19 @@ case class LinkedList[A](value: A, link: Node[A]) extends Node[A] {
     increment(this, 0, position).getValue
   }
 
-  override def map[B](f: (Node[A]) => B): Node[B] = {
-    def applyFun(n: Node[A], f: Node[A] => B): Node[B] = {
-      val valueB: B = f(n)
-      val link = n.getLink
-      if (link.isEmpty) {
-        LinkedList(valueB, EmptyNode)
-      } else {
-        LinkedList(valueB, applyFun(link, f))
-      }
+  override def map[B](f: A => B): Node[B] = {
+    if (this.isEmptyLink) {
+      LinkedList(f(this.getValue), EmptyNode)
+    } else {
+      LinkedList(f(this.getValue), this.link.map(f))
     }
-
-    applyFun(this, f)
   }
 
   def append(value: A): Node[A] = {
-    if (link.isEmpty) {
+    if (this.isEmptyLink) {
       this.copy(link = LinkedList(value, EmptyNode))
     } else {
-      val res = this.link.append(value)
-      this.copy(link = res)
+      this.copy(link = this.link.append(value))
     }
   }
 

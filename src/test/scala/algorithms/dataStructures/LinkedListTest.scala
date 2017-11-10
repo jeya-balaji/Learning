@@ -120,7 +120,7 @@ class LinkedListTest extends UnitSpec {
     ll shouldBe ll1
   }
 
-  it should "not append item if the position is wrong" in {
+  it should "not add item if the position is wrong" in {
     val ll = LinkedList(1,2,3,4,5)
     val ll2 = ll.addAt(6, -1)
 
